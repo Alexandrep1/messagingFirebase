@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:inimigos/notification_detail.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -8,8 +9,14 @@ void main() async {
   await Firebase.initializeApp(
   options: DefaultFirebaseOptions.currentPlatform,
 );
+  //iniciar o serviço background
+  FirebaseMessaging.onBackgroundMessage(_backgroundMessaging);
+
   runApp(const MyApp());
 }
+
+//Future para notificações background
+Future<void> _backgroundMessaging(RemoteMessage message) async {}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -68,6 +75,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void firebaseMessaging() async {
     FirebaseMessaging messaging = FirebaseMessaging.instance;
 
+
     //pedido permissão do usuário
     NotificationSettings settings = await messaging.requestPermission(
       alert: true,
@@ -75,10 +83,63 @@ class _MyHomePageState extends State<MyHomePage> {
       sound: true
     );
 
+    await FirebaseMessaging.instance.subscribeToTopic("motorista");
+
     //token FCM
     String? tokenFCM = await messaging.getToken();
     print("TOKEN FCM: $tokenFCM");
+
+    //NOTIFICAÇÃO COM O APP ABERTO
+    FirebaseMessaging.onMessage.listen((RemoteMessage message){
+      final title = message.notification?.title ?? '';
+      final body = message.notification?.body ?? '';
+
+      //exibindo mensagem
+      showDialog(
+      context: context, 
+      builder: (context) => AlertDialog(
+        title: Text(title),
+        content: Text(body, maxLines: 1, style: TextStyle(overflow: TextOverflow.ellipsis),),
+        actions: [
+          TextButton(onPressed: () => {}, child: Text("ver detalhes")),
+          TextButton(onPressed: () => {}, child: Text("fechar")),
+        ]
+      ),
+      );
+    });
+
+
+  //notifcação com app em background
+  FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message){
+      final title = message.notification?.title ?? '';
+      final body = message.notification?.body ?? '';
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => NotificationDetail(title: title, body: body)
+        )
+      );
+  });
+
+  //noticação com app fechado
+ // notificação com app fechado
+
+FirebaseMessaging.instance.getInitialMessage().then((message) {
+  if (message != null) {
+    final title = message.notification?.title ?? "";
+    final body = message.notification?.body ?? "";
+
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => NotificationDetail(title: title, body: body),
+      ),
+    );
   }
+});
+
+
+}
 
   void _incrementCounter() {
     setState(() {
@@ -89,6 +150,12 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter++;
     });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    firebaseMessaging();
   }
 
   @override
