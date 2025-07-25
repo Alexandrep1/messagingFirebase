@@ -1,6 +1,7 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:inimigos/animations/curved_example.dart';
 import 'package:inimigos/notification_detail.dart';
 import 'firebase_options.dart';
 
@@ -12,7 +13,7 @@ void main() async {
   //iniciar o serviço background
   FirebaseMessaging.onBackgroundMessage(_backgroundMessaging);
 
-  runApp(const MyApp());
+  runApp(CurvedExample());
 }
 
 //Future para notificações background
