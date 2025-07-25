@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "191270069389",
+    "project_id": "inimigos-d835f",
+    "storage_bucket": "inimigos-d835f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:191270069389:android:b14196849c578169efaec4",
+        "android_client_info": {
+          "package_name": "com.example.inimigos"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDiCY-NvG0-GBraLYf7mRIGNwwjTtT4WAM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
